@@ -1,0 +1,15 @@
+[versions]
+gradle-binary-compat = "0.17.0"
+gradle-kotlin = "2.1.10"
+gradle-publish-maven = "0.31.0"
+
+[libraries]
+gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "gradle-kotlin" }
+gradle-publish-maven = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradle-publish-maven" }
+
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "gradle-kotlin" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "gradle-kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "gradle-kotlin" }
+
+[plugins]
+binary-compat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "gradle-binary-compat" }
