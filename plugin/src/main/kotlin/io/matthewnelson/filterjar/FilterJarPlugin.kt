@@ -81,6 +81,18 @@ public open class FilterJarPlugin: Plugin<Project> {
     }
 
     private fun configureJava(project: Project, arguments: ExtensionArguments) {
+        val agp = listOf(
+            "com.android.base",
+            "com.android.library",
+            "com.android.application",
+        ).filter { pluginId -> project.plugins.hasPlugin(pluginId) }
+
+        if (agp.isNotEmpty()) {
+            // Java Android projects are not supported.
+            arguments.enableLogging.log { "The following Android plugins are present. Disabling... >> $agp" }
+            return
+        }
+
         val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
         if (sourceSets.isEmpty()) {
             arguments.enableLogging.log { "No Java SourceSets found. Disabling..." }

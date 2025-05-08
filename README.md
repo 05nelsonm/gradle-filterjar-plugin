@@ -14,8 +14,11 @@ resources that would not be used at runtime for the given application distributi
 
 ```kotlin
 plugins {
+    // ...
     id("io.matthewnelson.filterjar") version("0.1.0-alpha01")
 }
+
+// ...
 
 filterJar {
 
