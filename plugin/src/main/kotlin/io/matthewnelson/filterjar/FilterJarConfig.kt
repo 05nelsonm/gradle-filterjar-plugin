@@ -32,6 +32,11 @@ internal constructor(
 
     /**
      * A DSL for creating [FilterJarConfig], accessible via [FilterJarExtension] after applying the plugin
+     *
+     * **NOTE:** When filtering dependency Jar artifacts, the artifact's absolute path is checked to see
+     * if it contains [group]. Additionally, the Jar artifact's name is also checked to see if it starts
+     * with [artifact]. This means an [artifact] argument of "resource-exec-tor" will work multiple artifacts,
+     * such as "resource-exec-tor-jvm-{version}.jar" and "resource-exec-tor-gpl-jvm-{version}.jar".
      * */
     @FilterJarDsl
     public abstract class DSL
@@ -80,7 +85,7 @@ internal constructor(
          *  - [path] is blank
          *  - [path] is multi-line
          *  - [path] starts with character /
-         *  - [path] has already been configured
+         *  - [path] has already been defined
          * */
         @FilterJarDsl
         public abstract fun exclude(path: String)

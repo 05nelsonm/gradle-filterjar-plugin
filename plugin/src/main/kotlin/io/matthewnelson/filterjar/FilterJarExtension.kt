@@ -61,6 +61,8 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
  *  - [KotlinCompilation.compileDependencyConfigurationName]
  *  - [KotlinCompilation.runtimeDependencyConfigurationName]
  *
+ * If no [KotlinJvmTarget] compilations are found, [FilterJarPlugin] will do nothing.
+ *
  * ### Java Plugin
  *
  * When present (in the absence of a multiplatform plugin), the following configurations
@@ -69,10 +71,12 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
  *  - [SourceSet.getCompileClasspathConfigurationName]
  *  - [SourceSet.getRuntimeClasspathConfigurationName]
  *
- * To activate a custom [Configuration], see [activate]
- * To deactivate a [Configuration], see [deactivate]
+ * If no [SourceSet] are found, [FilterJarPlugin] will do nothing. Subsequently, if an
+ * Android Plugin is present, [FilterJarPlugin] will do nothing.
  *
  * @see [FilterJarPlugin]
+ * @see [activate]
+ * @see [deactivate]
  * */
 @FilterJarDsl
 public abstract class FilterJarExtension internal constructor(
@@ -88,12 +92,6 @@ public abstract class FilterJarExtension internal constructor(
     /**
      * Create a new filter
      *
-     * **NOTE:** when filtering dependency Jar artifacts, the artifact's absolute path
-     * is checked to contain [group]. Subsequently, the Jar artifact name is also checked
-     * to start with [artifact]. This means an [artifact] argument of "resource-exec-tor" will
-     * work on both "resource-exec-tor-jvm:version.jar" and "resource-exec-tor-gpl-jvm:version.jar"
-     * artifacts.
-     *
      * e.g.
      *
      *     filter(group = "io.matthewnelson.kmp-tor", artifact = "resource-exec-tor") {
@@ -104,6 +102,8 @@ public abstract class FilterJarExtension internal constructor(
      * @param [artifact] the dependency artifact name
      *
      * @see [filterGroup]
+     * @see [FilterJarConfig.DSL.group]
+     * @see [FilterJarConfig.DSL.artifact]
      *
      * @throws [IllegalArgumentException] when:
      *  - [group] is empty
@@ -138,7 +138,10 @@ public abstract class FilterJarExtension internal constructor(
      *
      * @param [group] the dependency group name
      *
+     * @see [filter]
      * @see [Group]
+     * @see [FilterJarConfig.DSL.group]
+     * @see [FilterJarConfig.DSL.artifact]
      *
      * @throws [IllegalArgumentException] when:
      *  - [group] is empty
@@ -206,12 +209,6 @@ public abstract class FilterJarExtension internal constructor(
 
         /**
          * Create a filter using provided [group] argument
-         *
-         * **NOTE:** when filtering dependency Jar artifacts, the artifact's absolute path
-         * is checked to contain [group]. Subsequently, the Jar artifact name is also checked
-         * to start with [artifact]. This means an [artifact] argument of "resource-exec-tor" will
-         * work on both "resource-exec-tor-jvm:version.jar" and "resource-exec-tor-gpl-jvm:version.jar"
-         * artifacts.
          *
          * @throws [IllegalArgumentException] when:
          *  - [artifact] is empty

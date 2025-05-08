@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 public open class FilterJarPlugin: Plugin<Project> {
 
     public override fun apply(target: Project) {
-        val arguments = ExtensionArguments(target)
+        val arguments = ExtensionArgs(target)
 
         target.extensions.create(
             FilterJarExtension.NAME,
@@ -60,7 +60,7 @@ public open class FilterJarPlugin: Plugin<Project> {
         }
     }
 
-    private fun configureMultiplatform(project: Project, arguments: ExtensionArguments) {
+    private fun configureMultiplatform(project: Project, arguments: ExtensionArgs) {
         val jvmTargets = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
             .targets
             .filterIsInstance<KotlinJvmTarget>()
@@ -80,7 +80,7 @@ public open class FilterJarPlugin: Plugin<Project> {
         }.activateConfigurations(project, arguments)
     }
 
-    private fun configureJava(project: Project, arguments: ExtensionArguments) {
+    private fun configureJava(project: Project, arguments: ExtensionArgs) {
         val agp = listOf(
             "com.android.base",
             "com.android.library",
@@ -108,7 +108,7 @@ public open class FilterJarPlugin: Plugin<Project> {
         }.activateConfigurations(project, arguments)
     }
 
-    private fun List<String>.activateConfigurations(project: Project, arguments: ExtensionArguments) {
+    private fun List<String>.activateConfigurations(project: Project, arguments: ExtensionArgs) {
         val configs = arguments.configs.get()
         if (configs.isEmpty()) {
             arguments.enableLogging.log { "No FilterJarConfig have been created. Disabling..." }
@@ -136,7 +136,7 @@ public open class FilterJarPlugin: Plugin<Project> {
         }
     }
 
-    private class ExtensionArguments(project: Project) {
+    private class ExtensionArgs(project: Project) {
         val configs: MapProperty<String, RealFilterJarConfigDSL> = project
             .objects
             .mapProperty(String::class.java, RealFilterJarConfigDSL::class.java)
