@@ -32,6 +32,6 @@ gradlePlugin {
 kotlin { explicitApi() }
 
 dependencies {
-//    compileOnly(libs.gradle.kotlin)
-//    compileOnly(libs.gradle.android)
+    compileOnly(libs.gradle.kotlin)
+    testImplementation(kotlin("test"))
 }

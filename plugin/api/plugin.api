@@ -1,3 +1,39 @@
+public final class io/matthewnelson/filterjar/FilterJarConfig : java/io/Serializable, org/gradle/api/Named {
+	public fun getName ()Ljava/lang/String;
+}
+
+public abstract class io/matthewnelson/filterjar/FilterJarConfig$DSL : org/gradle/api/Named {
+	public final field artifact Ljava/lang/String;
+	public final field group Ljava/lang/String;
+	public final fun equals (Ljava/lang/Object;)Z
+	public abstract fun exclude (Ljava/lang/String;)V
+	public abstract fun exclude (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public final fun getName ()Ljava/lang/String;
+	public final fun hashCode ()I
+}
+
+public abstract class io/matthewnelson/filterjar/FilterJarConfig$DSL$Keep {
+	public final field exclude Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
+	public abstract fun keep (Ljava/lang/String;)V
+}
+
+public abstract interface annotation class io/matthewnelson/filterjar/FilterJarDsl : java/lang/annotation/Annotation {
+}
+
+public abstract class io/matthewnelson/filterjar/FilterJarExtension {
+	public final field enableLogging Lorg/gradle/api/provider/Property;
+	public final fun activate (Lorg/gradle/api/artifacts/Configuration;)V
+	public final fun deactivate (Lorg/gradle/api/artifacts/Configuration;)V
+	public final fun filter (Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public final fun filterGroup (Ljava/lang/String;Lorg/gradle/api/Action;)V
+}
+
+public abstract class io/matthewnelson/filterjar/FilterJarExtension$Group {
+	public final field group Ljava/lang/String;
+	public abstract fun filter (Ljava/lang/String;Lorg/gradle/api/Action;)V
+}
+
 public class io/matthewnelson/filterjar/FilterJarPlugin : org/gradle/api/Plugin {
 	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
