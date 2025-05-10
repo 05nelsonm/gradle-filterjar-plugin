@@ -74,84 +74,33 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
  * If no [SourceSet] are found, [FilterJarPlugin] will do nothing. Subsequently, if an
  * Android Plugin is present, [FilterJarPlugin] will do nothing.
  *
+ * @see [FilterJarApi]
  * @see [FilterJarPlugin]
  * @see [activate]
  * @see [deactivate]
  * */
 @FilterJarDsl
 public abstract class FilterJarExtension internal constructor(
-    @JvmField
-    public val enableLogging: Property<Boolean>,
+    public final override val enableLogging: Property<Boolean>,
     private val configs: MapProperty<String, RealFilterJarConfigDSL>,
-) {
+): FilterJarApi {
 
     internal companion object {
         internal const val NAME: String = "filterJar" // extension name
     }
 
-    /**
-     * Create a new filter
-     *
-     * e.g.
-     *
-     *     filter(group = "io.matthewnelson.kmp-tor", artifact = "resource-exec-tor") {
-     *         exclude("io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android")
-     *     }
-     *
-     * @param [group] the dependency group name
-     * @param [artifact] the dependency artifact name
-     *
-     * @see [filterGroup]
-     * @see [FilterJarConfig.DSL.group]
-     * @see [FilterJarConfig.DSL.artifact]
-     *
-     * @throws [IllegalArgumentException] when:
-     *  - [group] is empty
-     *  - [group] contains whitespace
-     *  - [artifact] is empty
-     *  - [artifact] contains whitespace
-     *  - No [FilterJarConfig.DSL.exclude] was configured
-     * */
     @FilterJarDsl
-    public fun filter(group: String, artifact: String, action: Action<FilterJarConfig.DSL>) {
+    public final override fun filter(group: String, artifact: String, action: Action<FilterJarConfig.DSL>) {
         val config = RealFilterJarConfigDSL.of(group, artifact)
         action.execute(config)
         configs.put(config.name, config.checkIsValid())
     }
 
-    /**
-     * Create multiple filters for artifacts with the same group
-     *
-     * e.g.
-     *
-     *     filterGroup(group = "io.matthewnelson.kmp-tor") {
-     *         filter(artifact = "resource-exec-tor") {
-     *             exclude("io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android")
-     *         }
-     *         filter(artifact = "resource-lib-tor") {
-     *             exclude("io/matthewnelson/kmp/tor/resource/lib/tor/native") {
-     *                 keep("/linux-libc/x86_64")
-     *             }
-     *         }
-     *     }
-     *
-     * @param [group] the dependency group name
-     *
-     * @see [filter]
-     * @see [Group]
-     * @see [FilterJarConfig.DSL.group]
-     * @see [FilterJarConfig.DSL.artifact]
-     *
-     * @throws [IllegalArgumentException] when:
-     *  - [group] is empty
-     *  - [group] contains whitespace
-     *  - No [FilterJarConfig] were configured for provided [Group]
-     * */
     @FilterJarDsl
-    public fun filterGroup(group: String, action: Action<Group>) {
+    public final override fun filterGroup(group: String, action: Action<FilterJarApi.Group>) {
         var wasConfigured = false
         var hasExecuted = false
-        val g = object : Group(group) {
+        val g = object : FilterJarApi.Group(group) {
             override fun filter(artifact: String, action: Action<FilterJarConfig.DSL>) {
                 if (hasExecuted) return
                 this@FilterJarExtension.filter(group, artifact, action)
@@ -168,55 +117,13 @@ public abstract class FilterJarExtension internal constructor(
         require(wasConfigured) { "No filters were configured for group[$group]" }
     }
 
-    /**
-     * Activates functionality for provided [Configuration]
-     *
-     * e.g.
-     *
-     *     activate(configurations["customClasspath"])
-     *
-     * @param [resolvable] the configuration to activate
-     * */
     @FilterJarDsl
-    public fun activate(resolvable: Configuration) {
+    public final override fun activate(resolvable: Configuration) {
         resolvable.assignAttributeFiltered(active = true)
     }
 
-    /**
-     * Deactivates functionality for provided [Configuration]
-     *
-     * e.g.
-     *
-     *     deactivate(configurations["customClasspath"])
-     *
-     * @param [resolvable] the configuration to activate
-     * */
     @FilterJarDsl
-    public fun deactivate(resolvable: Configuration) {
+    public final override fun deactivate(resolvable: Configuration) {
         resolvable.assignAttributeFiltered(active = false)
-    }
-
-    /**
-     * Configure multiple [FilterJarConfig] for artifacts with the same [group] name
-     *
-     * @see [filterGroup]
-     * */
-    @FilterJarDsl
-    public abstract class Group
-    @Throws(IllegalArgumentException::class)
-    internal constructor(@JvmField public val group: String) {
-
-        /**
-         * Create a filter using provided [group] argument
-         *
-         * @throws [IllegalArgumentException] when:
-         *  - [artifact] is empty
-         *  - [artifact] contains whitespace
-         *  - [FilterJarConfig.DSL.exclude] was not configured
-         * */
-        @FilterJarDsl
-        public abstract fun filter(artifact: String, action: Action<FilterJarConfig.DSL>)
-
-        init { FilterJarConfig.checkGroup(group) }
     }
 }

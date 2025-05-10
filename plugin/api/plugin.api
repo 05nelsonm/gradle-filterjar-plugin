@@ -1,3 +1,16 @@
+public abstract interface class io/matthewnelson/filterjar/FilterJarApi {
+	public abstract fun activate (Lorg/gradle/api/artifacts/Configuration;)V
+	public abstract fun deactivate (Lorg/gradle/api/artifacts/Configuration;)V
+	public abstract fun filter (Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public abstract fun filterGroup (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public abstract fun getEnableLogging ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class io/matthewnelson/filterjar/FilterJarApi$Group {
+	public final field group Ljava/lang/String;
+	public abstract fun filter (Ljava/lang/String;Lorg/gradle/api/Action;)V
+}
+
 public final class io/matthewnelson/filterjar/FilterJarConfig : java/io/Serializable, org/gradle/api/Named {
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getName ()Ljava/lang/String;
@@ -24,17 +37,12 @@ public abstract class io/matthewnelson/filterjar/FilterJarConfig$DSL$Keep {
 public abstract interface annotation class io/matthewnelson/filterjar/FilterJarDsl : java/lang/annotation/Annotation {
 }
 
-public abstract class io/matthewnelson/filterjar/FilterJarExtension {
-	public final field enableLogging Lorg/gradle/api/provider/Property;
+public abstract class io/matthewnelson/filterjar/FilterJarExtension : io/matthewnelson/filterjar/FilterJarApi {
 	public final fun activate (Lorg/gradle/api/artifacts/Configuration;)V
 	public final fun deactivate (Lorg/gradle/api/artifacts/Configuration;)V
 	public final fun filter (Ljava/lang/String;Ljava/lang/String;Lorg/gradle/api/Action;)V
 	public final fun filterGroup (Ljava/lang/String;Lorg/gradle/api/Action;)V
-}
-
-public abstract class io/matthewnelson/filterjar/FilterJarExtension$Group {
-	public final field group Ljava/lang/String;
-	public abstract fun filter (Ljava/lang/String;Lorg/gradle/api/Action;)V
+	public final fun getEnableLogging ()Lorg/gradle/api/provider/Property;
 }
 
 public class io/matthewnelson/filterjar/FilterJarPlugin : org/gradle/api/Plugin {
