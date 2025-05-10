@@ -18,39 +18,39 @@ package io.matthewnelson.filterjar.internal
 import io.matthewnelson.filterjar.FilterJarConfig
 import kotlin.test.*
 
-class RealFilterJarConfigDSLUnitTest {
+internal class RealFilterJarConfigDSLUnitTest {
 
     @Test
     fun givenGroup_whenEmpty_thenThrowsException() {
-        assertIllegalArgument { newDSL("", "artifact") }
+        assertIllegalArgument { testFilterDSL("", "artifact") }
     }
 
     @Test
     fun givenGroup_whenWhitespace_thenThrowsException() {
-        assertIllegalArgument { newDSL(" ", "artifact") }
-        assertIllegalArgument { newDSL("\n", "artifact") }
+        assertIllegalArgument { testFilterDSL(" ", "artifact") }
+        assertIllegalArgument { testFilterDSL("\n", "artifact") }
     }
 
     @Test
     fun givenArtifact_whenEmpty_thenThrowsException() {
-        assertIllegalArgument { newDSL("group", "") }
+        assertIllegalArgument { testFilterDSL("group", "") }
     }
 
     @Test
     fun givenArtifact_whenWhitespace_thenThrowsException() {
-        assertIllegalArgument { newDSL("group", " ") }
-        assertIllegalArgument { newDSL("artifact", "\n") }
+        assertIllegalArgument { testFilterDSL("group", " ") }
+        assertIllegalArgument { testFilterDSL("artifact", "\n") }
     }
 
     @Test
     fun givenExclude_whenPathBlank_thenThrowsException() {
-        assertIllegalArgument { newDSL().exclude("") }
-        assertIllegalArgument { newDSL().exclude("  ") }
+        assertIllegalArgument { testFilterDSL().exclude("") }
+        assertIllegalArgument { testFilterDSL().exclude("  ") }
     }
 
     @Test
     fun givenExclude_whenPathMultiLine_thenThrowsException() {
-        assertIllegalArgument { newDSL().exclude("""
+        assertIllegalArgument { testFilterDSL().exclude("""
             some
             path
             argument
@@ -59,28 +59,28 @@ class RealFilterJarConfigDSLUnitTest {
 
     @Test
     fun givenExclude_whenPathStartsWithSlash_thenThrowsException() {
-        assertIllegalArgument { newDSL().exclude("/something") }
+        assertIllegalArgument { testFilterDSL().exclude("/something") }
     }
 
     @Test
     fun givenExclude_whenPathAlreadyConfigured_thenThrowsException() {
-        val dsl = newDSL()
+        val dsl = testFilterDSL()
         dsl.exclude("some/path")
         assertIllegalArgument { dsl.exclude("some/path") }
     }
 
     @Test
     fun givenExclude_whenPathStartsWithOtherExcludePath_thenThrowsException() {
-        val dsl = newDSL()
+        val dsl = testFilterDSL()
         dsl.exclude("some/path")
         dsl.exclude("some/path/already/covered")
-        assertIllegalArgument { dsl.checkValid() }
+        assertIllegalArgument { dsl.checkIsValid() }
     }
 
     @Test
     fun givenExcludeWithKeep_whenKeepExists_thenThrowsException() {
         var threwOnKeep = false
-        newDSL().exclude("some/path") { keep ->
+        testFilterDSL().exclude("some/path") { keep ->
             keep.keep("/this")
             assertIllegalArgument {
                 try {
@@ -98,7 +98,7 @@ class RealFilterJarConfigDSLUnitTest {
     fun givenExcludeWithKeep_whenKeepStartsWithOtherKeep_thenThrowsException() {
         var threwOnKeep = false
         assertIllegalArgument {
-            newDSL().exclude("some/path") { keep ->
+            testFilterDSL().exclude("some/path") { keep ->
                 keep.keep("/short")
                 try {
                     keep.keep("/short/already/covered")
@@ -121,12 +121,11 @@ class RealFilterJarConfigDSLUnitTest {
             filters = mapOf("some/path" to setOf("some/path/keep")),
         )
 
-        val dsl = newDSL(expected.group, expected.artifact)
+        val dsl = testFilterDSL(expected.group, expected.artifact)
         dsl.exclude(expected.filters.keys.first()) { keep ->
             keep.keep("/keep")
         }
-        dsl.checkValid()
-        val actual = dsl.toFilterJarConfig()
+        val actual = dsl.checkIsValid().toFilterJarConfig()
 
         assertEquals(expected.group, actual.group)
         assertEquals(expected.artifact, actual.artifact)
@@ -136,9 +135,4 @@ class RealFilterJarConfigDSLUnitTest {
     private inline fun assertIllegalArgument(block: () -> Unit) {
         assertFailsWith<IllegalArgumentException> { block() }
     }
-
-    private fun newDSL(
-        group: String = "group",
-        artifact: String = "artifact",
-    ): RealFilterJarConfigDSL = RealFilterJarConfigDSL.of(group, artifact)
 }

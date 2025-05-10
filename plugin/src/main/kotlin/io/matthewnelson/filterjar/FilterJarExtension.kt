@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 /**
- * Extension for configuring [FilterJarConfig] to filter out things from dependency
- * Jar files.
+ * Extension for configuring [FilterJarConfig] to filter out things from dependency Jar artifacts.
  *
  * e.g.
  *

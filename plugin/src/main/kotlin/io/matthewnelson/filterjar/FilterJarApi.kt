@@ -39,6 +39,8 @@ public interface FilterJarApi {
 
     /**
      * Enable/disable logging for the plugin
+     *
+     * Default: `false`
      * */
     public val enableLogging: Property<Boolean>
 
