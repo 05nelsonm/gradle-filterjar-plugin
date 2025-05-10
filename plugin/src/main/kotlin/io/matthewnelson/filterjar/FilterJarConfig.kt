@@ -35,8 +35,8 @@ internal constructor(
      *
      * **NOTE:** When filtering dependency Jar artifacts, the artifact's absolute path is checked to see
      * if it contains [group]. Additionally, the Jar artifact's name is also checked to see if it starts
-     * with [artifact]. This means an [artifact] argument of "resource-exec-tor" will work multiple artifacts,
-     * such as "resource-exec-tor-jvm-{version}.jar" and "resource-exec-tor-gpl-jvm-{version}.jar".
+     * with [artifact]. For example, an [artifact] argument of "resource-exec-tor" will work for multiple
+     * artifacts, such as "resource-exec-tor-jvm-{version}.jar" and "resource-exec-tor-gpl-jvm-{version}.jar".
      * */
     @FilterJarDsl
     public abstract class DSL
@@ -63,8 +63,8 @@ internal constructor(
     ): Named {
 
         /**
-         * Add a rule to exclude all paths within the dependency jar file that **start**
-         * with the provided [path] argument
+         * Add a rule to exclude all paths within the dependency Jar artifact that **start**
+         * with the provided [path] argument.
          *
          * e.g.
          *
@@ -91,12 +91,9 @@ internal constructor(
         public abstract fun exclude(path: String)
 
         /**
-         * Add a rule to exclude all paths within the dependency jar file that **start**
+         * Add a rule to exclude all paths within the dependency Jar artifact that **start**
          * with the provided [path] argument, but do **not** start with any of the configured
          * [Keep.keep] arguments.
-         *
-         * Essentially, "exclude all Jar entries that start with [path], **except** for the
-         * ones that I want to keep here and here..."
          *
          * e.g.
          *
@@ -178,12 +175,14 @@ internal constructor(
         public final override fun equals(other: Any?): Boolean {
             if (other !is FilterJarConfig) return false
             if (other::class != this::class) return false
-            return other.name == name
+            if (other.group != group) return false
+            return other.artifact == artifact
         }
 
         public final override fun hashCode(): Int {
             var result = 17
-            result = result * 31 + name.hashCode()
+            result = result * 31 + group.hashCode()
+            result = result * 31 + artifact.hashCode()
             result = result * 31 + this::class.hashCode()
             return result
         }
@@ -194,7 +193,24 @@ internal constructor(
         }
     }
 
-    override fun getName(): String = "$group:$artifact"
+    public override fun getName(): String = "$group:$artifact"
+
+    public override fun equals(other: Any?): Boolean {
+        if (other !is FilterJarConfig) return false
+        if (other.group != group) return false
+        if (other.artifact != artifact) return false
+        return other.filters == filters
+    }
+
+    public override fun hashCode(): Int {
+        var result = 17
+        result = result * 31 + group.hashCode()
+        result = result * 31 + artifact.hashCode()
+        result = result * 31 + filters.hashCode()
+        return result
+    }
+
+    public override fun toString(): String = "FilterJarConfig[name=$name]@${hashCode()}"
 
     init {
         group.checkArgument { "group" }

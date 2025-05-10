@@ -116,8 +116,7 @@ public abstract class FilterJarExtension internal constructor(
     public fun filter(group: String, artifact: String, action: Action<FilterJarConfig.DSL>) {
         val config = RealFilterJarConfigDSL.of(group, artifact)
         action.execute(config)
-        config.checkValid()
-        configs.put(config.name, config)
+        configs.put(config.name, config.checkIsValid())
     }
 
     /**

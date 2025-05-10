@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
  *
  * @see [FilterJarExtension]
  * */
-public open class FilterJarPlugin: Plugin<Project> {
+public open class FilterJarPlugin internal constructor(): Plugin<Project> {
 
-    public override fun apply(target: Project) {
+    public final override fun apply(target: Project) {
         val arguments = ExtensionArgs(target)
 
         target.extensions.create(
@@ -66,7 +66,7 @@ public open class FilterJarPlugin: Plugin<Project> {
             .filterIsInstance<KotlinJvmTarget>()
 
         if (jvmTargets.isEmpty()) {
-            arguments.enableLogging.log { "No KotlinMultiplatform Jvm targets found. Disabling..." }
+            arguments.enableLogging.log { "Disabling >> No KotlinMultiplatform Jvm targets found" }
             return
         }
 
@@ -89,13 +89,13 @@ public open class FilterJarPlugin: Plugin<Project> {
 
         if (agp.isNotEmpty()) {
             // Java Android projects are not supported.
-            arguments.enableLogging.log { "The following Android plugins are present. Disabling... >> $agp" }
+            arguments.enableLogging.log { "Disabling >> The following Android plugins are present $agp" }
             return
         }
 
         val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
         if (sourceSets.isEmpty()) {
-            arguments.enableLogging.log { "No Java SourceSets found. Disabling..." }
+            arguments.enableLogging.log { "Disabling >> No Java SourceSets found" }
             return
         }
 
@@ -109,9 +109,9 @@ public open class FilterJarPlugin: Plugin<Project> {
     }
 
     private fun List<String>.activateConfigurations(project: Project, arguments: ExtensionArgs) {
-        val configs = arguments.configs.get()
+        val configs = arguments.configs.get().mapTo(LinkedHashSet()) { it.value.toFilterJarConfig() }
         if (configs.isEmpty()) {
-            arguments.enableLogging.log { "No FilterJarConfig have been created. Disabling..." }
+            arguments.enableLogging.log { "Disabling >> No FilterJarConfig have been created" }
             return
         }
 
@@ -131,7 +131,7 @@ public open class FilterJarPlugin: Plugin<Project> {
             transform.to.attribute(FILTERED, true)
             transform.parameters { parameters ->
                 parameters.enableLogging.set(arguments.enableLogging.get())
-                configs.values.forEach { config -> parameters.filterConfigs.add(config.toFilterJarConfig()) }
+                parameters.filterConfigs.addAll(configs)
             }
         }
     }

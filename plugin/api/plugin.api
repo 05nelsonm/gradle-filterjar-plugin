@@ -1,5 +1,8 @@
 public final class io/matthewnelson/filterjar/FilterJarConfig : java/io/Serializable, org/gradle/api/Named {
+	public fun equals (Ljava/lang/Object;)Z
 	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class io/matthewnelson/filterjar/FilterJarConfig$DSL : org/gradle/api/Named {
@@ -35,8 +38,7 @@ public abstract class io/matthewnelson/filterjar/FilterJarExtension$Group {
 }
 
 public class io/matthewnelson/filterjar/FilterJarPlugin : org/gradle/api/Plugin {
-	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
+	public final fun apply (Lorg/gradle/api/Project;)V
 }
 

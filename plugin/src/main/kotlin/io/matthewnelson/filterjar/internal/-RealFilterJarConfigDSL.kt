@@ -67,7 +67,7 @@ internal class RealFilterJarConfigDSL private constructor(
 
     @JvmSynthetic
     @Throws(IllegalArgumentException::class)
-    internal fun checkValid() {
+    internal fun checkIsValid(): RealFilterJarConfigDSL {
         require(filters.isNotEmpty()) { "No exclusions have been defined for FilterJarConfig[$name]" }
         val sorted = filters.entries.sortedBy { it.key.length }
         sorted.forEach { (exclude, _) ->
@@ -77,6 +77,7 @@ internal class RealFilterJarConfigDSL private constructor(
                 require(!other.startsWith(exclude)) { "exclude[$other] cannot start with another exclude[$exclude]" }
             }
         }
+        return this
     }
 
     public override fun toString(): String = buildString {
