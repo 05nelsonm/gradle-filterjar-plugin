@@ -80,12 +80,19 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
  * */
 @FilterJarDsl
 public abstract class FilterJarExtension internal constructor(
-    public final override val enableLogging: Property<Boolean>,
+
+    /**
+     * Enable/disable logging for the plugin
+     *
+     * Default: `false`
+     * */
+    @JvmField
+    public val enableLogging: Property<Boolean>,
     private val configs: MapProperty<String, RealFilterJarConfigDSL>,
 ): FilterJarApi {
 
-    internal companion object {
-        internal const val NAME: String = "filterJar" // extension name
+    public companion object {
+        public const val NAME: String = "filterJar"
     }
 
     @FilterJarDsl

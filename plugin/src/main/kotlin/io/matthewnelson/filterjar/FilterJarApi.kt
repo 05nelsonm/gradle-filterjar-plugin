@@ -17,7 +17,6 @@ package io.matthewnelson.filterjar
 
 import org.gradle.api.Action
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.provider.Property
 
 /**
  * [FilterJarExtension] Api for extensibility via delegation.
@@ -29,6 +28,9 @@ import org.gradle.api.provider.Property
  *         private val delegate: FilterJarExtension,
  *     ): FilterJarApi by delegate {
  *
+ *         @JvmField
+ *         public val enableLogging: Property<Boolean> = delegate.enableLogging
+ *
  *         // MyExtension extended functionality...
  *     }
  *
@@ -36,13 +38,6 @@ import org.gradle.api.provider.Property
  * */
 @FilterJarDsl
 public interface FilterJarApi {
-
-    /**
-     * Enable/disable logging for the plugin
-     *
-     * Default: `false`
-     * */
-    public val enableLogging: Property<Boolean>
 
     /**
      * Create a new filter
