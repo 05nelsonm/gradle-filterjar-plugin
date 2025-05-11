@@ -84,10 +84,11 @@ public abstract class FilterJarExtension internal constructor(
     /**
      * Enable/disable logging for the plugin
      *
-     * Default: `false`
+     * Default: whatever gradle property `io.matthewnelson.filterjar.logging` is
+     * set to, otherwise `false`.
      * */
     @JvmField
-    public val enableLogging: Property<Boolean>,
+    public val logging: Property<Boolean>,
     private val configs: MapProperty<String, RealFilterJarConfigDSL>,
 ): FilterJarApi {
 

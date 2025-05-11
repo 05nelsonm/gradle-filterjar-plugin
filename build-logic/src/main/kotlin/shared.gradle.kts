@@ -14,6 +14,7 @@
  * limitations under the License.
  **/
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -35,6 +36,7 @@ java {
 tasks.withType(KotlinCompile::class.java) {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_11)
+        explicitApiMode.set(ExplicitApiMode.Strict)
     }
 }
 

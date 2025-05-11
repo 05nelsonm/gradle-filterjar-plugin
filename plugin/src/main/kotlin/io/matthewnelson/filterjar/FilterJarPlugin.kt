@@ -43,7 +43,7 @@ public open class FilterJarPlugin internal constructor(): Plugin<Project> {
         target.extensions.create(
             FilterJarExtension.NAME,
             FilterJarExtension::class.java,
-            arguments.enableLogging,
+            arguments.logging,
             arguments.configs,
         )
 
@@ -66,7 +66,7 @@ public open class FilterJarPlugin internal constructor(): Plugin<Project> {
             .filterIsInstance<KotlinJvmTarget>()
 
         if (jvmTargets.isEmpty()) {
-            arguments.enableLogging.log { "Disabling >> No KotlinMultiplatform Jvm targets found" }
+            arguments.logging.log { "Disabling >> No KotlinMultiplatform Jvm targets found" }
             return
         }
 
@@ -89,13 +89,13 @@ public open class FilterJarPlugin internal constructor(): Plugin<Project> {
 
         if (agp.isNotEmpty()) {
             // Java Android projects are not supported.
-            arguments.enableLogging.log { "Disabling >> The following Android plugins are present $agp" }
+            arguments.logging.log { "Disabling >> The following Android plugins are present $agp" }
             return
         }
 
         val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
         if (sourceSets.isEmpty()) {
-            arguments.enableLogging.log { "Disabling >> No Java SourceSets found" }
+            arguments.logging.log { "Disabling >> No Java SourceSets found" }
             return
         }
 
@@ -111,7 +111,7 @@ public open class FilterJarPlugin internal constructor(): Plugin<Project> {
     private fun List<String>.activateConfigurations(project: Project, arguments: ExtensionArgs) {
         val configs = arguments.configs.get().mapTo(LinkedHashSet()) { it.value.toFilterJarConfig() }
         if (configs.isEmpty()) {
-            arguments.enableLogging.log { "Disabling >> No FilterJarConfig have been created" }
+            arguments.logging.log { "Disabling >> No FilterJarConfig have been created" }
             return
         }
 
@@ -120,7 +120,7 @@ public open class FilterJarPlugin internal constructor(): Plugin<Project> {
         forEach { name ->
             val configuration = project.configurations.getByName(name)
             if (configuration.attributes.contains(FILTERED)) {
-                arguments.enableLogging.log { "Attribute[${FILTERED.name}] present for $configuration" }
+                arguments.logging.log { "Attribute[${FILTERED.name}] present for $configuration" }
                 return@forEach
             }
             configuration.assignAttributeFiltered(active = true)
@@ -130,7 +130,7 @@ public open class FilterJarPlugin internal constructor(): Plugin<Project> {
             transform.from.attribute(FILTERED, false)
             transform.to.attribute(FILTERED, true)
             transform.parameters { parameters ->
-                parameters.enableLogging.set(arguments.enableLogging.get())
+                parameters.enableLogging.set(arguments.logging.get())
                 parameters.filterConfigs.addAll(configs)
             }
         }
@@ -141,10 +141,18 @@ public open class FilterJarPlugin internal constructor(): Plugin<Project> {
             .objects
             .mapProperty(String::class.java, RealFilterJarConfigDSL::class.java)
 
-        val enableLogging: Property<Boolean> = project
+        val logging: Property<Boolean> = project
             .objects
             .property(Boolean::class.javaObjectType)
-            .apply { set(false) }
+            .apply {
+                val value = project
+                    .properties["io.matthewnelson.filterjar.logging"]
+                    ?.toString()
+                    ?.toBooleanStrict()
+                    ?: false
+
+                set(value)
+            }
     }
 
     internal companion object {

@@ -29,8 +29,6 @@ gradlePlugin {
     }
 }
 
-kotlin { explicitApi() }
-
 dependencies {
     compileOnly(libs.gradle.kotlin)
     testImplementation(kotlin("test"))

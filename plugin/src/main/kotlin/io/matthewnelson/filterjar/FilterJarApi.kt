@@ -29,7 +29,7 @@ import org.gradle.api.artifacts.Configuration
  *     ): FilterJarApi by delegate {
  *
  *         @JvmField
- *         public val enableLogging: Property<Boolean> = delegate.enableLogging
+ *         public val logging: Property<Boolean> = delegate.logging
  *
  *         // MyExtension extended functionality...
  *     }
