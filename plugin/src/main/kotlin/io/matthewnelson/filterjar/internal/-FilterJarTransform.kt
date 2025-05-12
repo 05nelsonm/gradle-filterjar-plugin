@@ -92,36 +92,41 @@ internal abstract class FilterJarTransform internal constructor(): TransformActi
                 throw RuntimeException("Failed to delete duplicate jar file[$newJar]")
             }
 
-            val sourceJar = JarFile(oldJar)
             val buf = ByteArray(DEFAULT_BUFFER_SIZE)
 
-            JarOutputStream(newJar.outputStream()).use { oStream ->
-                sourceJar.entries().iterator().forEach { entry ->
-                    var write = true
-                    for ((exclude, keeps) in filters.entries) {
-                        if (!entry.name.startsWith(exclude)) continue
-                        write = keeps.firstOrNull { keep -> entry.name.startsWith(keep) } != null
-                        if (write) enableLogging.log(prefix = false) { "      ---KEEP[${entry.name}]" }
-                        break
-                    }
-
-                    if (!write) {
-                        enableLogging.log(prefix = false) { "      EXCLUDE[${entry.name}]" }
-                        return@forEach
-                    }
-
-                    try {
-                        oStream.putNextEntry(JarEntry(entry.name))
-                        sourceJar.getInputStream(entry).use { iStream ->
-                            while (true) {
-                                val read = iStream.read(buf)
-                                if (read == -1) break
-                                oStream.write(buf, 0, read)
-                            }
+            JarFile(oldJar).use { sourceJar ->
+                JarOutputStream(newJar.outputStream()).use { oStream ->
+                    sourceJar.entries().iterator().forEach { entry ->
+                        var write = true
+                        for ((exclude, keeps) in filters.entries) {
+                            if (!entry.name.startsWith(exclude)) continue
+                            write = if (entry.isDirectory) {
+                                keeps.firstOrNull { keep -> entry.name.startsWith(keep) || keep.startsWith(entry.name) }
+                            } else {
+                                keeps.firstOrNull { keep -> entry.name.startsWith(keep) }
+                            } != null
+                            if (write) enableLogging.log(prefix = false) { "      ---KEEP[${entry.name}]" }
+                            break
                         }
-                        oStream.closeEntry()
-                    } catch (t: Throwable) {
-                        throw RuntimeException("Failed to write $entry", t)
+
+                        if (!write) {
+                            enableLogging.log(prefix = false) { "      EXCLUDE[${entry.name}]" }
+                            return@forEach
+                        }
+
+                        try {
+                            oStream.putNextEntry(JarEntry(entry))
+                            sourceJar.getInputStream(entry).use { iStream ->
+                                while (true) {
+                                    val read = iStream.read(buf)
+                                    if (read == -1) break
+                                    oStream.write(buf, 0, read)
+                                }
+                            }
+                            oStream.closeEntry()
+                        } catch (t: Throwable) {
+                            throw RuntimeException("Failed to write $entry", t)
+                        }
                     }
                 }
             }

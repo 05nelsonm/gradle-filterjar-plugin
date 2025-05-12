@@ -15,14 +15,17 @@
  **/
 package io.matthewnelson.filterjar.internal
 
+import io.matthewnelson.filterjar.FilterJarConfig
+import io.matthewnelson.filterjar.internal.FilterJarTransform.Companion.executeTransform
 import io.matthewnelson.filterjar.internal.FilterJarTransform.Companion.findConfig
+import org.junit.BeforeClass
 import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
 import java.io.File
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
+import java.io.IOException
+import java.security.MessageDigest
+import java.util.jar.JarFile
+import kotlin.test.*
 
 @RunWith(Enclosed::class)
 internal class FilterJarTransformUnitTest {
@@ -92,6 +95,94 @@ internal class FilterJarTransformUnitTest {
                 .resolve(configs.first().artifact + "-0.1.0.jar")
 
             assertFailsWith<RuntimeException> { artifact.findConfig(configs) }
+        }
+    }
+
+    class ExecuteTransform {
+
+        companion object {
+            private const val LOG = false
+
+            private val DIR_RESOURCES = CWD
+                .resolve("src")
+                .resolve("test")
+                .resolve("resources")
+
+            private val DIR_TEST = CWD
+                .resolve("build")
+                .resolve("tmp")
+                .resolve("test")
+                .resolve("execute_transform")
+
+            private val JAR_TESTING = DIR_RESOURCES
+                .resolve("testing.jar")
+
+            @JvmStatic
+            @BeforeClass
+            fun beforeClass() {
+                if (!DIR_TEST.exists() && !DIR_TEST.mkdirs()) {
+                    throw IOException("Failed mkdirs[$DIR_TEST]")
+                }
+            }
+        }
+
+        @Test
+        fun givenJarFile_whenTransformed_thenEntryInformationIsPreserved() {
+            val expected = JAR_TESTING.sha256()
+            val newJar = DIR_TEST.resolve("preserve_entry_info.jar")
+
+            newConfig { exclude("will_never_hit") }.executeTransform(JAR_TESTING, newJar, LOG)
+            assertEquals(expected, newJar.sha256())
+        }
+
+        @Test
+        fun givenJarFile_whenKeepHasSubDirectoryEntries_thenNewJarSubDirectoryEntriesAreKept() {
+            val expected = "4c84a0fe9e166286830d1deb6f78cc4bf9922b21ed54ca9d4665832907611bb6"
+            val newJar = DIR_TEST.resolve("keep_subdir_entries.jar")
+            newConfig {
+                exclude("io/matthewnelson/test/native") { keep ->
+                    keep.keep("/linux-libc/aarch64")
+                    keep.keep("/mingw/x86_64")
+                }
+            }.executeTransform(JAR_TESTING, newJar, LOG)
+            assertEquals(expected, newJar.sha256())
+            assertNotEquals(expected, JAR_TESTING.sha256())
+        }
+
+        private fun File.sha256(): String {
+            require(name.endsWith(".jar")) { "File must be a .jar file" }
+
+            val digest = MessageDigest.getInstance("SHA-256")
+            val buf = ByteArray(DEFAULT_BUFFER_SIZE)
+
+            JarFile(this).use { jarFile ->
+                jarFile.entries().iterator().forEach { entry ->
+                    digest.apply {
+                        update(entry.name.encodeToByteArray())
+                        entry.creationTime?.let { update(it.toMillis().toString().encodeToByteArray()) }
+                        entry.lastModifiedTime?.let { update(it.toMillis().toString().encodeToByteArray()) }
+                        entry.lastAccessTime?.let { update(it.toMillis().toString().encodeToByteArray()) }
+                        update(entry.time.toString().encodeToByteArray())
+
+                        jarFile.getInputStream(entry).use { iStream ->
+                            while (true) {
+                                val read = iStream.read(buf)
+                                if (read == -1) break
+                                update(buf, 0, read)
+                            }
+                        }
+                    }
+                }
+            }
+
+            @OptIn(ExperimentalStdlibApi::class)
+            return digest.digest().toHexString()
+        }
+
+        private fun newConfig(block: RealFilterJarConfigDSL.() -> Unit): FilterJarConfig {
+            val dsl = testFilterDSL(group = "does.not.matter", artifact = "does.not.matter")
+            block(dsl)
+            return dsl.checkIsValid().toFilterJarConfig()
         }
     }
 }
