@@ -22,7 +22,7 @@ plugins {
 
 filterJar {
 
-    enableLogging.set(true)
+    logging.set(true)
 
     // Define filters, e.g...
     filter(group = "io.matthewnelson.kmp-tor", artifact = "resource-lib-tor") {
