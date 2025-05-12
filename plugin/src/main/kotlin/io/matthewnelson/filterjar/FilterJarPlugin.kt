@@ -130,7 +130,7 @@ public open class FilterJarPlugin internal constructor(): Plugin<Project> {
             transform.from.attribute(FILTERED, false)
             transform.to.attribute(FILTERED, true)
             transform.parameters { parameters ->
-                parameters.enableLogging.set(arguments.logging.get())
+                parameters.logging.set(arguments.logging.get())
                 parameters.filterConfigs.addAll(configs)
             }
         }

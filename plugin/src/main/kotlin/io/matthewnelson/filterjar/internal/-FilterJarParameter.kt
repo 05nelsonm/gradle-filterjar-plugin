@@ -25,5 +25,5 @@ internal interface FilterJarParameter: TransformParameters {
     @get:Input
     val filterConfigs: SetProperty<FilterJarConfig>
     @get:Input
-    val enableLogging: Property<Boolean>
+    val logging: Property<Boolean>
 }

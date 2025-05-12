@@ -50,10 +50,10 @@ internal abstract class FilterJarTransform internal constructor(): TransformActi
         val newName = oldName.substringBeforeLast('.') + "-filtered.jar"
         val newJar = outputs.file(newName)
 
-        parameters.enableLogging.log { "\n    SOURCE[$oldName]\n    FILTER[$newJar]" }
+        parameters.logging.log { "\n    SOURCE[$oldName]\n    FILTER[$newJar]" }
 
         try {
-            config.executeTransform(oldJar, newJar, parameters.enableLogging.get())
+            config.executeTransform(oldJar, newJar, parameters.logging.get())
         } catch (t: Throwable) {
             throw RuntimeException("Failed to filter artifact[$oldName] by config[${config.name}]", t)
         }
@@ -87,7 +87,7 @@ internal abstract class FilterJarTransform internal constructor(): TransformActi
         }
 
         @JvmSynthetic
-        internal fun FilterJarConfig.executeTransform(oldJar: File, newJar: File, enableLogging: Boolean) {
+        internal fun FilterJarConfig.executeTransform(oldJar: File, newJar: File, logging: Boolean) {
             if (newJar.exists() && !newJar.delete()) {
                 throw RuntimeException("Failed to delete duplicate jar file[$newJar]")
             }
@@ -105,12 +105,12 @@ internal abstract class FilterJarTransform internal constructor(): TransformActi
                             } else {
                                 keeps.firstOrNull { keep -> entry.name.startsWith(keep) }
                             } != null
-                            if (write) enableLogging.log(prefix = false) { "      ---KEEP[${entry.name}]" }
+                            if (write) logging.log(prefix = false) { "      ---KEEP[${entry.name}]" }
                             break
                         }
 
                         if (!write) {
-                            enableLogging.log(prefix = false) { "      EXCLUDE[${entry.name}]" }
+                            logging.log(prefix = false) { "      EXCLUDE[${entry.name}]" }
                             return@forEach
                         }
 
