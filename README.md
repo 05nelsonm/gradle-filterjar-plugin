@@ -35,7 +35,9 @@ filterJar {
     // Define filters that share a group name
     filterGroup(group = "io.matthewnelson.kmp-tor") {
         filter(artifact = "resource-exec-tor") {
+            // Exclude all entries starting with this path
             exclude("io/matthewnelson/kmp/tor/resource/exec/tor/native") {
+                // But keep entries within the exclude path that start with these
                 keep("/linux-libc/aarch64")
                 keep("/linux-libc/x86_64")
             }

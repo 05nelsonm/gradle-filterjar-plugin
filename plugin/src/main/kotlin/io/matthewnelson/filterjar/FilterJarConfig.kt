@@ -103,7 +103,7 @@ internal constructor(
          *     }
          *
          *     // logs:
-         *     // EXCLUDE[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/]
+         *     // ---KEEP[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/]
          *     // ---KEEP[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/aarch64/]
          *     // ---KEEP[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/aarch64/tor.gz]
          *     // EXCLUDE[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/armv7/]
@@ -148,7 +148,7 @@ internal constructor(
              *     }
              *
              *     // logs:
-             *     // EXCLUDE[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/]
+             *     // ---KEEP[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/]
              *     // ---KEEP[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/aarch64/]
              *     // ---KEEP[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/aarch64/tor.gz]
              *     // EXCLUDE[io/matthewnelson/kmp/tor/resource/exec/tor/native/linux-android/armv7/]
