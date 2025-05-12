@@ -100,7 +100,11 @@ internal abstract class FilterJarTransform internal constructor(): TransformActi
                         var write = true
                         for ((exclude, keeps) in filters.entries) {
                             if (!entry.name.startsWith(exclude)) continue
-                            write = keeps.firstOrNull { keep -> entry.name.startsWith(keep) } != null
+                            write = if (entry.isDirectory) {
+                                keeps.firstOrNull { keep -> entry.name.startsWith(keep) || keep.startsWith(entry.name) }
+                            } else {
+                                keeps.firstOrNull { keep -> entry.name.startsWith(keep) }
+                            } != null
                             if (write) enableLogging.log(prefix = false) { "      ---KEEP[${entry.name}]" }
                             break
                         }

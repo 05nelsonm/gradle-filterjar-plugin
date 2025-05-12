@@ -25,10 +25,7 @@ import java.io.File
 import java.io.IOException
 import java.security.MessageDigest
 import java.util.jar.JarFile
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
+import kotlin.test.*
 
 @RunWith(Enclosed::class)
 internal class FilterJarTransformUnitTest {
@@ -104,38 +101,52 @@ internal class FilterJarTransformUnitTest {
     class ExecuteTransform {
 
         companion object {
-            private const val LOG = true
+            private const val LOG = false
 
-            private val RESOURCES = CWD
+            private val DIR_RESOURCES = CWD
                 .resolve("src")
                 .resolve("test")
                 .resolve("resources")
 
-            private val TESTING_JAR = RESOURCES
-                .resolve("testing.jar")
-
-            private val TEST_DIR = CWD
+            private val DIR_TEST = CWD
                 .resolve("build")
                 .resolve("tmp")
                 .resolve("test")
                 .resolve("execute_transform")
 
+            private val JAR_TESTING = DIR_RESOURCES
+                .resolve("testing.jar")
+
             @JvmStatic
             @BeforeClass
             fun beforeClass() {
-                if (!TEST_DIR.exists() && !TEST_DIR.mkdirs()) {
-                    throw IOException("Failed mkdirs[$TEST_DIR]")
+                if (!DIR_TEST.exists() && !DIR_TEST.mkdirs()) {
+                    throw IOException("Failed mkdirs[$DIR_TEST]")
                 }
             }
         }
 
         @Test
         fun givenJarFile_whenTransformed_thenEntryInformationIsPreserved() {
-            val expected = TESTING_JAR.sha256()
-            val newJar = TEST_DIR.resolve("preserve_info.jar")
+            val expected = JAR_TESTING.sha256()
+            val newJar = DIR_TEST.resolve("preserve_entry_info.jar")
 
-            newConfig { exclude("will_never_hit") }.executeTransform(TESTING_JAR, newJar, LOG)
+            newConfig { exclude("will_never_hit") }.executeTransform(JAR_TESTING, newJar, LOG)
             assertEquals(expected, newJar.sha256())
+        }
+
+        @Test
+        fun givenJarFile_whenKeepHasSubDirectoryEntries_thenNewJarSubDirectoryEntriesAreKept() {
+            val expected = "4c84a0fe9e166286830d1deb6f78cc4bf9922b21ed54ca9d4665832907611bb6"
+            val newJar = DIR_TEST.resolve("keep_subdir_entries.jar")
+            newConfig {
+                exclude("io/matthewnelson/test/native") { keep ->
+                    keep.keep("/linux-libc/aarch64")
+                    keep.keep("/mingw/x86_64")
+                }
+            }.executeTransform(JAR_TESTING, newJar, LOG)
+            assertEquals(expected, newJar.sha256())
+            assertNotEquals(expected, JAR_TESTING.sha256())
         }
 
         private fun File.sha256(): String {
