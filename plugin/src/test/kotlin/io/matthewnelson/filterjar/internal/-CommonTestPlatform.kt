@@ -15,7 +15,32 @@
  **/
 package io.matthewnelson.filterjar.internal
 
+import java.io.File
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
+import java.util.zip.ZipFile
+
 internal fun testFilterDSL(
     group: String = "group",
     artifact: String = "artifact",
 ): RealFilterJarConfigDSL = RealFilterJarConfigDSL.of(group, artifact)
+
+@Suppress("unused")
+internal fun zipToJar(zipFile: File, jarFile: File) {
+    val zip = ZipFile(zipFile)
+    val buf = ByteArray(DEFAULT_BUFFER_SIZE)
+
+    JarOutputStream(jarFile.outputStream()).use { oStream ->
+        zip.entries().iterator().forEach { entry ->
+            oStream.putNextEntry(JarEntry(entry))
+            zip.getInputStream(entry).use { iStream ->
+                while (true) {
+                    val read = iStream.read(buf)
+                    if (read == -1) break
+                    oStream.write(buf, 0, read)
+                }
+            }
+            oStream.closeEntry()
+        }
+    }
+}
