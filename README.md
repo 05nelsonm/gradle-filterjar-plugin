@@ -27,28 +27,59 @@ filterJar {
     // Define filters, e.g...
     filter(group = "io.matthewnelson.kmp-tor", artifact = "resource-lib-tor") {
         exclude("io/matthewnelson/kmp/tor/resource/lib/tor/native") {
-            keep("/linux-libc/aarch64")
             keep("/linux-libc/x86_64")
         }
     }
 
     // Define filters that share a group name
     filterGroup(group = "io.matthewnelson.kmp-tor") {
-        filter(artifact = "resource-exec-tor") {
+        filter(artifact = "resource-noexec-tor") {
             // Exclude all entries starting with this path
             exclude("io/matthewnelson/kmp/tor/resource/exec/tor/native") {
                 // But keep entries within the exclude path that start with these
-                keep("/linux-libc/aarch64")
                 keep("/linux-libc/x86_64")
             }
         }
-        filter(artifact = "resource-noexec-tor") {
-            exclude("io/matthewnelson/kmp/tor/resource/noexec/tor/native/linux-libc/armv7/")
-            exclude("io/matthewnelson/kmp/tor/resource/noexec/tor/native/linux-libc/ppc64/")
-            exclude("io/matthewnelson/kmp/tor/resource/noexec/tor/native/linux-libc/x86/")
-        }
     }
 }
+
+// --- logs ---
+// FILTER_JAR: 
+//     SOURCE[resource-lib-tor-jvm-408.16.1.jar]
+//     FILTER[~/.gradle/caches/8.12.1/transforms/13767819281f195d2780f3a327bd2333-f6ef606a-cc20-43e2-a7a3-922f1319491f/transformed/resource-lib-tor-jvm-408.16.1-filtered.jar]
+//       ---KEEP[io/matthewnelson/kmp/tor/resource/lib/tor/native/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-android/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-android/aarch64/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-android/aarch64/libtor.so.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-android/armv7/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-android/armv7/libtor.so.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-android/x86/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-android/x86/libtor.so.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-android/x86_64/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-android/x86_64/libtor.so.gz]
+//       ---KEEP[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/aarch64/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/aarch64/libtor.so.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/armv7/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/armv7/libtor.so.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/ppc64/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/ppc64/libtor.so.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/x86/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/x86/libtor.so.gz]
+//       ---KEEP[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/x86_64/]
+//       ---KEEP[io/matthewnelson/kmp/tor/resource/lib/tor/native/linux-libc/x86_64/libtor.so.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/macos/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/macos/aarch64/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/macos/aarch64/libtor.dylib.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/macos/x86_64/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/macos/x86_64/libtor.dylib.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/mingw/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/mingw/x86/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/mingw/x86/tor.dll.gz]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/mingw/x86_64/]
+//       EXCLUDE[io/matthewnelson/kmp/tor/resource/lib/tor/native/mingw/x86_64/tor.dll.gz]
+//
+// ...
 ```
 
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
