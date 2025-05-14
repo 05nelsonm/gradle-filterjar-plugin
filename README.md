@@ -13,6 +13,8 @@ resources that would not be used at runtime for the given application distributi
 <!-- TAG_VERSION -->
 
 ```kotlin
+// build.gradle.kts
+
 plugins {
     // ...
     id("io.matthewnelson.filterjar") version("0.1.0")
