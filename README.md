@@ -23,7 +23,6 @@ plugins {
 // ...
 
 filterJar {
-
     logging.set(true)
 
     // Define filters, e.g...
@@ -44,6 +43,41 @@ filterJar {
         }
     }
 }
+```
+
+<!-- TAG_VERSION -->
+
+```groovy
+// build.gradle
+
+plugins {
+    id 'io.matthewnelson.filterjar' version '0.1.0'
+}
+
+filterJar {
+    logging.set(true)
+
+    // Define filters, e.g...
+    filter("io.matthewnelson.kmp-tor", "resource-lib-tor") { config ->
+        config.exclude("io/matthewnelson/kmp/tor/resource/lib/tor/native") { keep ->
+            keep.keep("/linux-libc/x86_64")
+        }
+    }
+
+    // Define filters that share a group name
+    filterGroup("io.matthewnelson.kmp-tor") { group ->
+        group.filter("resource-noexec-tor") { config ->
+            // Exclude all entries starting with this path
+            config.exclude("io/matthewnelson/kmp/tor/resource/exec/tor/native") { keep ->
+                // But keep entries within the exclude path that start with these
+                keep.keep("/linux-libc/x86_64")
+            }
+        }
+    }
+}
+```
+
+```
 
 // --- logs ---
 // FILTER_JAR: 
