@@ -31,5 +31,7 @@ gradlePlugin {
 
 dependencies {
     compileOnly(libs.gradle.kotlin)
+
     testImplementation(kotlin("test"))
+    testImplementation(libs.encoding.base16)
 }

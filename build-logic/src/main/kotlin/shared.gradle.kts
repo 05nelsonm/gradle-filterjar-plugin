@@ -16,13 +16,14 @@
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val libs = the<LibrariesForLibs>()
 
 plugins {
     id("java-library")
-    id("kotlin")
+    id("org.jetbrains.kotlin.jvm")
     id("com.vanniktech.maven.publish")
 }
 
@@ -37,6 +38,8 @@ tasks.withType(KotlinCompile::class.java) {
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_11)
         explicitApiMode.set(ExplicitApiMode.Strict)
+        freeCompilerArgs.add("-Xsuppress-version-warnings")
+        languageVersion.set(KotlinVersion.KOTLIN_1_8)
     }
 }
 
