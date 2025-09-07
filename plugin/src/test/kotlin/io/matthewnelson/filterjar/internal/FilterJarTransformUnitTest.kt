@@ -15,6 +15,8 @@
  **/
 package io.matthewnelson.filterjar.internal
 
+import io.matthewnelson.encoding.base16.Base16
+import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.matthewnelson.filterjar.FilterJarConfig
 import io.matthewnelson.filterjar.internal.FilterJarTransform.Companion.executeTransform
 import io.matthewnelson.filterjar.internal.FilterJarTransform.Companion.findConfig
@@ -31,6 +33,7 @@ import kotlin.test.*
 internal class FilterJarTransformUnitTest {
 
     private companion object {
+        private val BASE_16 = Base16 { encodeToLowercase = true }
         private val CWD = File(".").absoluteFile.normalize()
     }
 
@@ -175,8 +178,7 @@ internal class FilterJarTransformUnitTest {
                 }
             }
 
-            @OptIn(ExperimentalStdlibApi::class)
-            return digest.digest().toHexString()
+            return digest.digest().encodeToString(BASE_16)
         }
 
         private fun newConfig(block: RealFilterJarConfigDSL.() -> Unit): FilterJarConfig {
