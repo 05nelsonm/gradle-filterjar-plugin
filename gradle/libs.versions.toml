@@ -1,7 +1,7 @@
 [versions]
-gradle-binary-compat = "0.17.0"
-gradle-kotlin = "2.1.10"
-gradle-publish-maven = "0.31.0"
+gradle-binary-compat = "0.18.1"
+gradle-kotlin = "2.2.10"
+gradle-publish-maven = "0.34.0"
 
 [libraries]
 gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "gradle-kotlin" }
