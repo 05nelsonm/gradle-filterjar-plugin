@@ -2,7 +2,7 @@
 encoding                = "2.4.0"
 
 gradle-binary-compat    = "0.18.1"
-gradle-kotlin           = "2.2.10"
+gradle-kotlin           = "2.2.20"
 gradle-publish-maven    = "0.34.0"
 
 [libraries]
