@@ -16,3 +16,20 @@
 plugins {
     alias(libs.plugins.binary.compat)
 }
+
+allprojects {
+    findProperty("GROUP")?.let { group = it }
+    findProperty("VERSION_NAME")?.let { version = it }
+    findProperty("POM_DESCRIPTION")?.let { description = it.toString() }
+
+    repositories {
+        mavenCentral()
+
+        if (version.toString().endsWith("-SNAPSHOT")) {
+            // Only allow snapshot dependencies for non-release versions.
+            // This would cause a build failure if attempting to make a release
+            // while depending on a -SNAPSHOT version (such as core).
+            maven("https://central.sonatype.com/repository/maven-snapshots/")
+        }
+    }
+}
