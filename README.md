@@ -1,5 +1,6 @@
 # gradle-filterjar-plugin
 [![badge-license]][url-license]
+[![badge-latest-release]][url-latest-release]
 
 A Gradle Plugin for Java & KotlinMultiplatform/Jvm projects to reduce dependency jar sizes by filtering out unneeded 
 things, such as native compilations, that will not be used at runtime of a given release for a specific OS & Architecture.
@@ -17,7 +18,7 @@ resources that would not be used at runtime for the given application distributi
 
 plugins {
     // ...
-    id("io.matthewnelson.filterjar") version("0.1.0")
+    id("io.matthewnelson.filterjar") version("0.1.1")
 }
 
 // ...
@@ -51,7 +52,7 @@ filterJar {
 // build.gradle
 
 plugins {
-    id 'io.matthewnelson.filterjar' version '0.1.0'
+    id 'io.matthewnelson.filterjar' version '0.1.1'
 }
 
 filterJar {
@@ -118,8 +119,11 @@ filterJar {
 // ...
 ```
 
+<!-- TAG_VERSION -->
+[badge-latest-release]: https://img.shields.io/badge/latest--release-0.1.1-blue.svg?style=flat
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
+[url-latest-release]: https://github.com/05nelsonm/gradle-filterjar-plugin/releases/latest
 [url-license]: https://www.apache.org/licenses/LICENSE-2.0
 [url-kmp-tor-resource]: https://github.com/05nelsonm/kmp-tor-resource
 [url-craig]: https://github.com/craigraw

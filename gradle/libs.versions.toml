@@ -1,5 +1,5 @@
 [versions]
-encoding                = "2.5.0-SNAPSHOT"
+encoding                = "2.5.0"
 
 gradle-binary-compat    = "0.18.1"
 gradle-kotlin           = "2.2.20"
